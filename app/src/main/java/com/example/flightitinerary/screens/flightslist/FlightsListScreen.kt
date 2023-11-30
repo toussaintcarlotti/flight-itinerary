@@ -1,4 +1,4 @@
-package com.example.flightitinerary.flightslist
+package com.example.flightitinerary.screens.flightslist
 
 import androidx.compose.runtime.Composable
 
