@@ -164,6 +164,8 @@ fun HomeScreen(navController: NavController) {
     CalendarDialog(
         state = calendarState,
         config = CalendarConfig(
+            yearSelection = true,
+            monthSelection = true,
             locale = Locale.FRANCE,
             style = CalendarStyle.MONTH,
         ),

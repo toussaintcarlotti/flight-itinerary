@@ -67,6 +67,7 @@ fun FlightItineraryAppBar(
 fun FlightItineraryApp() {
     var canNavigateBack by remember { mutableStateOf(false) }
     Scaffold(
+        /*
         topBar = {
             FlightItineraryAppBar(
                 canNavigateBack = canNavigateBack,
@@ -74,7 +75,7 @@ fun FlightItineraryApp() {
                     canNavigateBack = false
                 }
             )
-        },
+        },*/
         content = { innerPadding -> FlightItineraryNavHost(Modifier.padding(innerPadding)) },
         bottomBar = {
             BottomAppBar(
