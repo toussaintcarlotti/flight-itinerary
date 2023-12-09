@@ -1,4 +1,4 @@
-package com.example.flightitinerary.models
+package com.example.flightitinerary.data.models
 
 class Flight(
     var startCity: String,

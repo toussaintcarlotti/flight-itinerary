@@ -89,7 +89,6 @@ fun FlightItineraryApp() {
                         )
                     )
             ) {
-                Text(text = "BottomBar", textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
     )
