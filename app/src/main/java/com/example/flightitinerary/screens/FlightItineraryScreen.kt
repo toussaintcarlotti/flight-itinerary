@@ -107,6 +107,13 @@ fun FlightItineraryNavHost(
         startDestination = startDestination
     ) {
         composable("home") { HomeScreen(navController) }
-        composable("flightsList") { FlightsListScreen() }
+        composable("flightsList/{from}/{to}/{date}") { backStackEntry ->
+            FlightsListScreen(
+                navController,
+                backStackEntry.arguments?.getString("from")!!,
+                backStackEntry.arguments?.getString("to")!!,
+                backStackEntry.arguments?.getString("date")!!
+            )
+        }
     }
 }

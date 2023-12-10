@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.flightitinerary.data.models.Airport
 import com.example.flightitinerary.data.repository.AirportRepo
 import com.example.flightitinerary.ui.components.DropdownUi
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -45,9 +47,9 @@ import java.util.Locale
 fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
 
-    var isButtonEnabled by remember { mutableStateOf(false) }
-    var startCity by remember { mutableStateOf("") }
-    var endCity by remember { mutableStateOf("") }
+    var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
+    var departureCity: String by rememberSaveable { mutableStateOf("") }
+    var arrivalCity: String by rememberSaveable { mutableStateOf("") }
 
     val calendarState = rememberUseCaseState()
     val selectedDateRange = remember {
@@ -56,7 +58,7 @@ fun HomeScreen(navController: NavController) {
     }
 
     val airportRepo = AirportRepo(context)
-    val airports = remember { airportRepo.getAllAirPorts() }
+    val airports = rememberSaveable { airportRepo.getAllAirPorts() }
 
 
     Column {
@@ -78,21 +80,23 @@ fun HomeScreen(navController: NavController) {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 DropdownUi(
                     label = "Ville de départ",
-                    listItems = airports.map { it.city }.toTypedArray(),
+                    listItems = airports.map { it.city },
                     onSelectItem = {
                         isButtonEnabled = true
-                        startCity = it
-                    }
+                        departureCity = it
+                    },
+                    stateSaver = Airport.saver()
                 )
             }
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 DropdownUi(
                     label = "Ville d'arrivée",
-                    listItems = airports.map { it.city }.toTypedArray(),
+                    listItems = airports.map { it.city },
                     onSelectItem = {
                         isButtonEnabled = true
-                        endCity = it
-                    }
+                        arrivalCity = it
+                    },
+                    stateSaver = Airport.saver()
                 )
             }
         }
@@ -159,7 +163,7 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Button(
-                    onClick = { navController.navigate("flightsList") },
+                    onClick = { navController.navigate("flightsList/$departureCity/$arrivalCity/${selectedDateRange.value.lower}_${selectedDateRange.value.upper}") },
                     enabled = isButtonEnabled,
                 ) {
                     Text(text = "Trouver un vol")

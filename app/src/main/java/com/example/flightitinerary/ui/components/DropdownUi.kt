@@ -9,21 +9,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun DropdownUi(label: String, listItems: Array<String>, onSelectItem: (String) -> Unit = {}) {
+fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String) -> Unit = {}, stateSaver: Saver<T, String>) {
     // state of the menu
     var expanded by remember {
         mutableStateOf(false)
     }
 
-    // remember the selected item
-    var selectedItem by remember {
+    // selected item
+    var selectedItem by rememberSaveable {
         mutableStateOf("")
     }
-
     // box
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -33,7 +34,7 @@ fun DropdownUi(label: String, listItems: Array<String>, onSelectItem: (String) -
     ) {
         // text field
         TextField(
-            value = selectedItem,
+            value = selectedItem.toString(),
             onValueChange = {},
             readOnly = true,
             label = { Text(text = label) },
