@@ -14,4 +14,8 @@ class AirportRepo(private val context: Context) {
             emptyList()
         }
     }
+
+    fun getAirportByCity(city: String): Airport? {
+        return getAllAirPorts().find { it.city == city }
+    }
 }

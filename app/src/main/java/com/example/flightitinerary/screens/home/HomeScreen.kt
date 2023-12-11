@@ -163,7 +163,7 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Button(
-                    onClick = { navController.navigate("flightsList/$departureCity/$arrivalCity/${selectedDateRange.value.lower}_${selectedDateRange.value.upper}") },
+                    onClick = { navController.navigate("flightsList/$departureCity/$arrivalCity/${selectedDateRange.value.lower}/${selectedDateRange.value.upper}") },
                     enabled = isButtonEnabled,
                 ) {
                     Text(text = "Trouver un vol")
