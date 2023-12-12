@@ -1,7 +1,10 @@
 package com.example.flightitinerary.data.models
 
+import android.os.Parcelable
 import androidx.compose.runtime.saveable.Saver
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Airport(
     val code: String,
     val lat: String,
@@ -21,7 +24,7 @@ data class Airport(
     val icao: String,
     val direct_flights: String,
     val carriers: String
-) {
+) : Parcelable {
     @Override
     override fun toString(): String {
         return city

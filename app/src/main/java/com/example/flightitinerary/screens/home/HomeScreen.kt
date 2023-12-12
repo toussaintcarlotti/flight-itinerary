@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +26,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.flightitinerary.data.models.Airport
-import com.example.flightitinerary.data.repository.AirportRepo
 import com.example.flightitinerary.ui.components.DropdownUi
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -44,12 +43,12 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavController) {
-    val context = LocalContext.current
+fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
+    val airports by viewModel.state.collectAsState()
 
     var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
-    var departureCity: String by rememberSaveable { mutableStateOf("") }
-    var arrivalCity: String by rememberSaveable { mutableStateOf("") }
+    var departureAirport by rememberSaveable { mutableStateOf<Airport?>(null) }
+    var arrivalAirport by rememberSaveable { mutableStateOf<Airport?>(null) }
 
     val calendarState = rememberUseCaseState()
     val selectedDateRange = remember {
@@ -57,11 +56,8 @@ fun HomeScreen(navController: NavController) {
         mutableStateOf(value)
     }
 
-    val airportRepo = AirportRepo(context)
-    val airports = rememberSaveable { airportRepo.getAllAirPorts() }
-
-
     Column {
+
         Text(
             text = "Trouvez votre vol",
             modifier = Modifier
@@ -80,23 +76,23 @@ fun HomeScreen(navController: NavController) {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 DropdownUi(
                     label = "Ville de départ",
-                    listItems = airports.map { it.city },
+                    listItems = airports.map { it },
                     onSelectItem = {
                         isButtonEnabled = true
-                        departureCity = it
+                        departureAirport = it
                     },
-                    stateSaver = Airport.saver()
+                    saverState = Airport.saver()
                 )
             }
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 DropdownUi(
                     label = "Ville d'arrivée",
-                    listItems = airports.map { it.city },
+                    listItems = airports.map { it },
                     onSelectItem = {
                         isButtonEnabled = true
-                        arrivalCity = it
+                        arrivalAirport = it
                     },
-                    stateSaver = Airport.saver()
+                    saverState = Airport.saver()
                 )
             }
         }
@@ -163,7 +159,7 @@ fun HomeScreen(navController: NavController) {
                 }
 
                 Button(
-                    onClick = { navController.navigate("flightsList/$departureCity/$arrivalCity/${selectedDateRange.value.lower}/${selectedDateRange.value.upper}") },
+                    onClick = { navController.navigate("flightsList/${departureAirport?.icao}/${arrivalAirport?.icao}/${selectedDateRange.value.lower}/${selectedDateRange.value.upper}") },
                     enabled = isButtonEnabled,
                 ) {
                     Text(text = "Trouver un vol")
@@ -186,6 +182,7 @@ fun HomeScreen(navController: NavController) {
         },
     )
 }
+
 
 
 

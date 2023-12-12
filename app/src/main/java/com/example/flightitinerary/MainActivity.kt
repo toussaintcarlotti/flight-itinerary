@@ -11,6 +11,7 @@ import com.example.flightitinerary.ui.theme.FlightItineraryTheme
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             FlightItineraryTheme {

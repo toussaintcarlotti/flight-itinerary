@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -84,4 +85,6 @@ dependencies {
     }
 
     implementation("javax.inject:javax.inject:1")
+
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 }

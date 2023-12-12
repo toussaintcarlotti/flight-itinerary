@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String) -> Unit = {}, stateSaver: Saver<T, String>) {
+fun <T> DropdownUi(label: String, listItems: List<T>, onSelectItem: (T) -> Unit = {}, saverState: Saver<T, String>) {
     // state of the menu
     var expanded by remember {
         mutableStateOf(false)
@@ -23,7 +23,7 @@ fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String
 
     // selected item
     var selectedItem by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf<T?>(null)
     }
     // box
     ExposedDropdownMenuBox(
@@ -34,7 +34,7 @@ fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String
     ) {
         // text field
         TextField(
-            value = selectedItem.toString(),
+            value = selectedItem?.toString() ?: "",
             onValueChange = {},
             readOnly = true,
             label = { Text(text = label) },
@@ -57,7 +57,7 @@ fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String
             listItems.forEach { selectedOption ->
                 // menu item
                 DropdownMenuItem(
-                    text = { Text(text = selectedOption) },
+                    text = { Text(text = selectedOption.toString()) },
                     onClick = {
                         selectedItem = selectedOption
                         expanded = false
@@ -69,3 +69,4 @@ fun <T> DropdownUi(label: String, listItems: List<String>, onSelectItem: (String
         }
     }
 }
+

@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,30 +31,20 @@ fun FlightsListScreen(
     endDate: String
 ) {
     val context = LocalContext.current
-    val airportRepo = AirportRepo(context)
+    val airportRepo = AirportRepo()
     val flightRepo = FlightRepo()
 
-    val departureAirport = airportRepo.getAirportByCity(from)
-    val arrivalAirport = airportRepo.getAirportByCity(to)
+    // val departureAirport = airportRepo.getAirportByCity(from)
+    // val arrivalAirport = airportRepo.getAirportByCity(to)
     val format = SimpleDateFormat("yyyy-MM-dd")
 
 
     var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
 
-    LaunchedEffect(Unit) {
-        // Call your suspending function here
-        val flightsResult = flightRepo.getFlightsByAirport(
-            departureAirport?.icao ?: "",
-            format.parse(startDate)?.time?.div(1000)?.toInt() ?: 0,
-            format.parse(endDate)?.time?.div(1000)?.toInt() ?: 0
-        )
 
-        // Update the state with the result
-        flights = flightsResult
-    }
 
     Column {
-        Text(text = "From: ${departureAirport?.city}")
+        // Text(text = "From: ${departureAirport?.city}")
         Text(text = "To: $to")
         Text(text = "Date: $startDate")
         Text(text = "Date: $endDate")
