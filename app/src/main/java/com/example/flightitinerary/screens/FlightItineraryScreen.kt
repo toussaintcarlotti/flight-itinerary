@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.flightitinerary.R
 import com.example.flightitinerary.screens.flightslist.FlightsListScreen
+import com.example.flightitinerary.screens.flightslist.FlightsViewModel
 import com.example.flightitinerary.screens.home.HomeScreen
 import com.example.flightitinerary.screens.home.HomeViewModel
 
@@ -111,6 +112,7 @@ fun FlightItineraryNavHost(
         composable("flightsList/{from}/{to}/{startDate}/{endDate}") { backStackEntry ->
             FlightsListScreen(
                 navController,
+                viewModel = FlightsViewModel(),
                 backStackEntry.arguments?.getString("from")!!,
                 backStackEntry.arguments?.getString("to")!!,
                 backStackEntry.arguments?.getString("startDate")!!,

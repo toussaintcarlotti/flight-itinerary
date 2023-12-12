@@ -3,16 +3,10 @@ package com.example.flightitinerary.screens.flightslist
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.example.flightitinerary.data.models.Flight
 import com.example.flightitinerary.data.repository.AirportRepo
 import com.example.flightitinerary.data.repository.FlightRepo
 import java.text.SimpleDateFormat
@@ -25,33 +19,20 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun FlightsListScreen(
     navController: NavController,
+    viewModel: FlightsViewModel,
     from: String,
     to: String,
     startDate: String,
     endDate: String
 ) {
-    val context = LocalContext.current
+    val flights by viewModel.state.collectAsState()
+
     val airportRepo = AirportRepo()
     val flightRepo = FlightRepo()
 
     // val departureAirport = airportRepo.getAirportByCity(from)
     // val arrivalAirport = airportRepo.getAirportByCity(to)
     val format = SimpleDateFormat("yyyy-MM-dd")
-
-
-    var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
-
-
-
-    Column {
-        // Text(text = "From: ${departureAirport?.city}")
-        Text(text = "To: $to")
-        Text(text = "Date: $startDate")
-        Text(text = "Date: $endDate")
-        flights.forEach {
-            Text(text = it.toString())
-        }
-    }
 
 
 }

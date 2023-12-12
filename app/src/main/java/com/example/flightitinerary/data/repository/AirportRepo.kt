@@ -7,6 +7,6 @@ class AirportRepo() {
     private val apiService = ApiClient.apiService
 
     suspend fun getAllAirPorts(): List<Airport> {
-        return apiService.getAirports();
+        return apiService.getAirports().data;
     }
 }

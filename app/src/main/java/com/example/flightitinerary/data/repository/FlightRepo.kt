@@ -6,11 +6,11 @@ import com.example.flightitinerary.data.models.Flight
 class FlightRepo {
     private val apiService = ApiClient.apiService
 
-    suspend fun getAllFlights(begin: Int, end: Int): List<Flight> {
-        return apiService.getAllFlights(begin, end)
+    suspend fun getAllFlights() : List<Flight> {
+        return apiService.getFlights().data
     }
 
     suspend fun getFlightsByAirport(airport: String, begin: Int, end: Int): List<Flight> {
-        return apiService.getFlightsByAirport(airport, begin, end)
+        return apiService.getFlightsByAirport(airport, begin, end).data
     }
 }

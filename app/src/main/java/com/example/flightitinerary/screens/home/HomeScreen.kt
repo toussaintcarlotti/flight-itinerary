@@ -3,7 +3,6 @@ package com.example.flightitinerary.screens.home
 import android.os.Build
 import android.util.Range
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +56,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
     }
 
     Column {
-
         Text(
             text = "Trouvez votre vol",
             modifier = Modifier
@@ -99,8 +97,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
             Column(
@@ -115,52 +112,42 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                shape = RoundedCornerShape(20.dp)
-                            ),
-                    ) {
+                    Column (modifier = Modifier.padding(8.dp)) {
+                        Text(text = "Du")
                         Text(
                             text = selectedDateRange.value.lower.format(
                                 DateTimeFormatter.ofPattern(
                                     "dd/MM/yyyy"
                                 )
                             ),
-                            modifier = Modifier.padding(8.dp),
                         )
                     }
 
                     Icon(Icons.Filled.ChevronRight, contentDescription = "Arrow")
 
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                shape = RoundedCornerShape(20.dp)
-                            ),
-                    ) {
+                    Column (modifier = Modifier.padding(8.dp)) {
+                        Text(text = "Au")
                         Text(
                             text = selectedDateRange.value.upper.format(
                                 DateTimeFormatter.ofPattern(
                                     "dd/MM/yyyy"
                                 )
                             ),
-                            modifier = Modifier.padding(8.dp),
                         )
                     }
                 }
 
-                Button(onClick = { calendarState.show() }) {
+                Button(
+                    onClick = { calendarState.show() },
+                    shape = RoundedCornerShape(10.dp),
+                ) {
                     Text(text = "Modifier la date")
                 }
 
                 Button(
                     onClick = { navController.navigate("flightsList/${departureAirport?.icao}/${arrivalAirport?.icao}/${selectedDateRange.value.lower}/${selectedDateRange.value.upper}") },
                     enabled = isButtonEnabled,
+                    shape = RoundedCornerShape(10.dp),
                 ) {
                     Text(text = "Trouver un vol")
                 }
