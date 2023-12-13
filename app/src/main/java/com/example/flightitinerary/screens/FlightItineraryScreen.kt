@@ -1,6 +1,10 @@
 package com.example.flightitinerary.screens
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
@@ -17,12 +21,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -34,6 +40,7 @@ import com.example.flightitinerary.screens.flightslist.FlightsListScreen
 import com.example.flightitinerary.screens.flightslist.FlightsViewModel
 import com.example.flightitinerary.screens.home.HomeScreen
 import com.example.flightitinerary.screens.home.HomeViewModel
+import kotlinx.coroutines.delay
 
 
 /**
@@ -103,12 +110,24 @@ fun FlightItineraryNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = "home"
 ) {
+    val context = LocalContext.current
+
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("home") { HomeScreen(navController, viewModel = HomeViewModel()) }
+        composable("noConnectionScreen") {
+            NetworkHandler(navController = navController, isNoConnectionScreen = true) {
+                NoInternetScreen()
+            }
+        }
+
+        composable("home") {
+            NetworkHandler(navController) {
+                HomeScreen(navController = navController, viewModel = HomeViewModel())
+            }
+        }
         composable("flightsList/{from}/{to}/{startDate}/{endDate}") { backStackEntry ->
             FlightsListScreen(
                 navController,
@@ -119,5 +138,43 @@ fun FlightItineraryNavHost(
                 backStackEntry.arguments?.getString("endDate")!!
             )
         }
+
+    }
+}
+
+@Composable
+fun NetworkHandler(navController: NavHostController, isNoConnectionScreen: Boolean = false, content: @Composable () -> Unit) {
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    val context = LocalContext.current
+
+    var isNetworkAvailable by remember { mutableStateOf(isNetworkAvailable(context)) }
+
+    LaunchedEffect(isNetworkAvailable) {
+        if (!isNetworkAvailable && !isNoConnectionScreen) {
+            navController.navigate("noConnectionScreen")
+        }
+
+        while (true) {
+            delay(1000)
+            val newNetworkState = isNetworkAvailable(context)
+            if (newNetworkState != isNetworkAvailable) {
+                isNetworkAvailable = newNetworkState
+            }
+        }
+    }
+
+    if (isNetworkAvailable && isNoConnectionScreen) {
+        navController.navigate("home")
+    } else if(isNetworkAvailable || isNoConnectionScreen) {
+        content()
+    }
+    else {
+        Log.d("Errreur", "no connct")
     }
 }
