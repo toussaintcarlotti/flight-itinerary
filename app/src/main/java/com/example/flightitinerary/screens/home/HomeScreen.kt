@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flightitinerary.data.models.Airport
 import com.example.flightitinerary.ui.components.DropdownUi
@@ -42,7 +43,8 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
+fun HomeScreen(navController: NavController) {
+    val viewModel = viewModel(modelClass = HomeViewModel::class.java)
     val airports by viewModel.state.collectAsState()
 
     var isButtonEnabled by rememberSaveable { mutableStateOf(false) }
@@ -51,7 +53,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
 
     val calendarState = rememberUseCaseState()
     val selectedDateRange = remember {
-        val value = Range(LocalDate.now(), LocalDate.now().plusDays(2))
+        val value = Range(LocalDate.now().minusYears(1), LocalDate.now().plusYears(1))
         mutableStateOf(value)
     }
 
@@ -112,7 +114,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column (modifier = Modifier.padding(8.dp)) {
+                    Column(modifier = Modifier.padding(8.dp)) {
                         Text(text = "Du")
                         Text(
                             text = selectedDateRange.value.lower.format(
@@ -125,7 +127,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
 
                     Icon(Icons.Filled.ChevronRight, contentDescription = "Arrow")
 
-                    Column (modifier = Modifier.padding(8.dp)) {
+                    Column(modifier = Modifier.padding(8.dp)) {
                         Text(text = "Au")
                         Text(
                             text = selectedDateRange.value.upper.format(
@@ -145,7 +147,17 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
                 }
 
                 Button(
-                    onClick = { navController.navigate("flightsList/${departureAirport?.icao}/${arrivalAirport?.icao}/${selectedDateRange.value.lower}/${selectedDateRange.value.upper}") },
+                    onClick = {
+                        var navigation = "flightsList?startDate=${selectedDateRange.value.lower}&endDate=${selectedDateRange.value.upper}"
+                        if (departureAirport !== null) {
+                            navigation += "&from=${departureAirport?.icao}"
+                        }
+                        if (arrivalAirport !== null) {
+                            navigation += "&to=${arrivalAirport?.icao}"
+                        }
+                        navController.navigate(navigation)
+
+                    },
                     enabled = isButtonEnabled,
                     shape = RoundedCornerShape(10.dp),
                 ) {

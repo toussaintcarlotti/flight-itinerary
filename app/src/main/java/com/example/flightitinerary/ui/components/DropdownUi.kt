@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun <T> DropdownUi(label: String, listItems: List<T>, onSelectItem: (T) -> Unit = {}, saverState: Saver<T, String>) {
+fun <T> DropdownUi(label: String, listItems: List<T>, onSelectItem: (T?) -> Unit = {}, saverState: Saver<T, String>) {
     // state of the menu
     var expanded by remember {
         mutableStateOf(false)
@@ -52,6 +52,15 @@ fun <T> DropdownUi(label: String, listItems: List<T>, onSelectItem: (T) -> Unit 
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            DropdownMenuItem(
+                text = { Text(text = "Aucune") },
+                onClick = {
+                    selectedItem = null
+                    expanded = false
+                    onSelectItem(null)
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+            )
             // this is a column scope
             // all the items are added vertically
             listItems.forEach { selectedOption ->

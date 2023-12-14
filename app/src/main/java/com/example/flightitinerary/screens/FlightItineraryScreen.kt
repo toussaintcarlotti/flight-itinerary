@@ -37,9 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.flightitinerary.R
 import com.example.flightitinerary.screens.flightslist.FlightsListScreen
-import com.example.flightitinerary.screens.flightslist.FlightsViewModel
 import com.example.flightitinerary.screens.home.HomeScreen
-import com.example.flightitinerary.screens.home.HomeViewModel
 import kotlinx.coroutines.delay
 
 
@@ -125,17 +123,17 @@ fun FlightItineraryNavHost(
 
         composable("home") {
             NetworkHandler(navController) {
-                HomeScreen(navController = navController, viewModel = HomeViewModel())
+                HomeScreen(navController = navController)
             }
         }
-        composable("flightsList/{from}/{to}/{startDate}/{endDate}") { backStackEntry ->
+        composable("flightsList?from={from}&to={to}&startDate={startDate}&endDate={endDate}") { backStackEntry ->
             FlightsListScreen(
                 navController,
-                viewModel = FlightsViewModel(),
-                backStackEntry.arguments?.getString("from")!!,
-                backStackEntry.arguments?.getString("to")!!,
                 backStackEntry.arguments?.getString("startDate")!!,
-                backStackEntry.arguments?.getString("endDate")!!
+                backStackEntry.arguments?.getString("endDate")!!,
+                backStackEntry.arguments?.getString("from"),
+                backStackEntry.arguments?.getString("to")
+
             )
         }
 

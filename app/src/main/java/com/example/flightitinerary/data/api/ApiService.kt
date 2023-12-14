@@ -13,9 +13,25 @@ interface ApiService {
     @GET("flights")
     suspend fun getFlights(): ApiResponse<List<Flight>>
 
-    @GET("flight/all/{begin}/{end}")
-    suspend fun getAllFlights(@Path("begin") begin: Int, @Path("end") end: Int): ApiResponse<List<Flight>>
+    @GET("flights/departure-arrival/{departure}/{arrival}/{begin}/{end}")
+    suspend fun getFlights(
+        @Path("departure") departure: String,
+        @Path("arrival") arrival: String,
+        @Path("begin") begin: Long,
+        @Path("end") end: Long
+    ): ApiResponse<List<Flight>>
 
     @GET("flights/departure/{airport}/{begin}/{end}")
-    suspend fun getFlightsByAirport(@Path("airport") airport: String, @Path("begin") begin: Int, @Path("end") end: Int): ApiResponse<List<Flight>>
+    suspend fun getFlightsDeparture(
+        @Path("airport") airport: String,
+        @Path("begin") begin: Long,
+        @Path("end") end: Long
+    ): ApiResponse<List<Flight>>
+
+    @GET("flights/arrival/{airport}/{begin}/{end}")
+    suspend fun getFlightsArrival(
+        @Path("airport") airport: String,
+        @Path("begin") begin: Long,
+        @Path("end") end: Long
+    ): ApiResponse<List<Flight>>
 }

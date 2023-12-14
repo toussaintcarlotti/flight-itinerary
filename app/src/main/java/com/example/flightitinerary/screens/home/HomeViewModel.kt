@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     private val repository = AirportRepo();
 
-
     private val _state = MutableStateFlow(emptyList<Airport>())
     val state: StateFlow<List<Airport>> get() = _state
 
