@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flightitinerary.ui.components.FlightCard
 import com.example.flightitinerary.utils.Utils
+import com.example.flightitinerary.utils.Utils.Companion.getTimestampFromStringDate
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -65,14 +66,23 @@ fun TrackScreen(
 
     LaunchedEffect(viewModel) {
         viewModel.fetchTrack(icao24, time)
-        viewModel.fetchFlights(icao24, LocalDate.now().minusDays(3).toString(), LocalDate.now().toString())
+        viewModel.fetchFlights(
+            icao24,
+            getTimestampFromStringDate(LocalDate.now().minusDays(3).toString()).toString(),
+            getTimestampFromStringDate(LocalDate.now().toString()).toString()
+        )
     }
 
     if (track.path.isNotEmpty()) {
         val lon = track.path.first()[2] as Double
         val lat = track.path.first()[1] as Double
 
-        val distance = calculateDistance(lat, lon, track.path.last()[1] as Double, track.path.last()[2] as Double)
+        val distance = calculateDistance(
+            lat,
+            lon,
+            track.path.last()[1] as Double,
+            track.path.last()[2] as Double
+        )
         val zoom = when {
             distance < 100 -> 7.0
             distance < 500 -> 6.0
@@ -89,7 +99,7 @@ fun TrackScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
 
@@ -107,7 +117,7 @@ fun TrackScreen(
                                         .build()
                                 )
                                 it.mapboxMap.loadStyle(
-                                    style(style = Style.STANDARD) {
+                                    style(style = Style.SATELLITE) {
                                         +geoJsonSource("line") {
                                             geometry(LineString.fromLngLats(track.path.map {
                                                 val lon = it[2] as Double
@@ -139,7 +149,7 @@ fun TrackScreen(
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
                     ) {
-                        Column (
+                        Column(
                             Modifier
                                 .border(2.dp, Color.LightGray, RoundedCornerShape(10.dp))
                                 .padding(10.dp)
@@ -151,39 +161,35 @@ fun TrackScreen(
                             Text(text = "Longitude: ??")
                         }
 
-                        Box(
+
+                        Row(
                             modifier = Modifier
-                                .border(2.dp, Color.LightGray, RoundedCornerShape(10.dp))
-                                .fillMaxWidth()
+                                .padding(10.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Vol des 3 derniers jours",
-                                    style = MaterialTheme.typography.bodyMedium,
+                            Text(
+                                text = "Vol des 3 derniers jours",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+
+                        LazyColumn {
+                            items(flights) { flight ->
+                                val flightDuration = flight.lastSeen - flight.firstSeen
+                                FlightCard(
+                                    navController = navController,
+                                    flightNumber = flight.icao24,
+                                    departureAirport = flight.departureAirportCity
+                                        ?: flight.estDepartureAirport,
+                                    arrivalAirport = flight.arrivalAirportCity
+                                        ?: flight.estArrivalAirport,
+                                    departureDate = Utils.secondsToDate(flight.firstSeen),
+                                    arrivalDate = Utils.secondsToDate(flight.lastSeen),
+                                    timeFlight = flight.firstSeen + 1,
+                                    flightDuration = flightDuration
                                 )
                             }
-
-                            LazyColumn {
-                                items(flights) { flight ->
-                                    val flightDuration = flight.lastSeen - flight.firstSeen
-                                    FlightCard(
-                                        navController = navController,
-                                        flightNumber = flight.icao24,
-                                        departureAirport = flight.departureAirportCity ?: flight.estDepartureAirport,
-                                        arrivalAirport = flight.arrivalAirportCity ?: flight.estArrivalAirport,
-                                        departureDate = Utils.secondsToDate(flight.firstSeen),
-                                        arrivalDate = Utils.secondsToDate(flight.lastSeen),
-                                        timeFlight = flight.firstSeen + 1,
-                                        flightDuration = flightDuration
-                                    )
-                                }
-                            }
-
                         }
                     }
                 }
@@ -212,7 +218,8 @@ fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): D
     val dLon = lon2Rad - lon1Rad
 
     // Formule de l'haversine
-    val a = sin(dLat / 2) * sin(dLat / 2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2) * sin(dLon / 2)
+    val a =
+        sin(dLat / 2) * sin(dLat / 2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2) * sin(dLon / 2)
     val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
     // Distance en kilomètres
