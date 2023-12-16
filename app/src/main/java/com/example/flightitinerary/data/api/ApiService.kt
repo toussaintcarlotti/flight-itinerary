@@ -3,6 +3,7 @@ package com.example.flightitinerary.data.api
 import com.example.flightitinerary.data.models.Airport
 import com.example.flightitinerary.data.models.ApiResponse
 import com.example.flightitinerary.data.models.Flight
+import com.example.flightitinerary.data.models.Track
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -34,4 +35,10 @@ interface ApiService {
         @Path("begin") begin: Long,
         @Path("end") end: Long
     ): ApiResponse<List<Flight>>
+
+    @GET("tracks/{icao24}/{time}")
+    suspend fun getTrackByAircraft(
+        @Path("icao24") icao24: String,
+        @Path("time") time: Long
+    ): ApiResponse<Track>
 }

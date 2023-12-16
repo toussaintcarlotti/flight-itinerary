@@ -1,10 +1,10 @@
 package com.example.flightitinerary.screens.flightslist
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,7 +62,6 @@ fun FlightsListScreen(
     }
 
     Column {
-        Log.d("FlightsListScreen", "from: $from, to: $to")
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,14 +79,16 @@ fun FlightsListScreen(
 
         LazyColumn {
             items(flights) { flight ->
-                val timeFlight = flight.lastSeen - flight.firstSeen
+                val flightDuration = flight.lastSeen - flight.firstSeen
                 FlightCard(
+                    navController = navController,
                     flightNumber = flight.icao24,
-                    departureAirport = flight.estDepartureAirport,
-                    arrivalAirport = flight.estArrivalAirport,
+                    departureAirport = flight.departureAirportCity ?: flight.estDepartureAirport,
+                    arrivalAirport = flight.arrivalAirportCity ?: flight.estArrivalAirport,
                     departureDate = secondsToDate(flight.firstSeen),
                     arrivalDate = secondsToDate(flight.lastSeen),
-                    timeFlight = timeFlight,
+                    timeFlight = flight.firstSeen + 1,
+                    flightDuration = flightDuration
                 )
             }
         }
@@ -103,19 +104,23 @@ fun FlightItem(flight: Flight) {
 
 @Composable
 fun FlightCard(
+    navController: NavController,
     flightNumber: String,
     departureAirport: String,
     arrivalAirport: String,
     departureDate: String,
     arrivalDate: String,
     timeFlight: Long,
+    flightDuration: Long
 ) {
-
     Row(
         modifier = Modifier
             .padding(16.dp)
             .border(2.dp, Color.LightGray, RoundedCornerShape(10.dp))
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                navController.navigate("track?icao24=$flightNumber&time=${timeFlight}")
+            },
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
     ) {
         Column(
@@ -241,7 +246,7 @@ fun FlightCard(
                         contentDescription = "Timer",
                     )
                     Text(
-                        text = "${timeFlight / 3600}h ${timeFlight % 3600 / 60}m",
+                        text = "${flightDuration / 3600}h ${flightDuration % 3600 / 60}m",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }

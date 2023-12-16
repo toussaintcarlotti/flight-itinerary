@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.flightitinerary.R
 import com.example.flightitinerary.screens.flightslist.FlightsListScreen
 import com.example.flightitinerary.screens.home.HomeScreen
+import com.example.flightitinerary.screens.track.TrackScreen
 import kotlinx.coroutines.delay
 
 
@@ -83,7 +84,9 @@ fun FlightItineraryApp() {
                 }
             )
         },*/
-        content = { innerPadding -> FlightItineraryNavHost(Modifier.padding(innerPadding)) },
+        content = { innerPadding ->
+            FlightItineraryNavHost(Modifier.padding(innerPadding))
+        },
         bottomBar = {
             BottomAppBar(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -127,23 +130,38 @@ fun FlightItineraryNavHost(
             }
         }
         composable("flightsList?from={from}&to={to}&startDate={startDate}&endDate={endDate}") { backStackEntry ->
-            FlightsListScreen(
-                navController,
-                backStackEntry.arguments?.getString("startDate")!!,
-                backStackEntry.arguments?.getString("endDate")!!,
-                backStackEntry.arguments?.getString("from"),
-                backStackEntry.arguments?.getString("to")
+            NetworkHandler(navController) {
+                FlightsListScreen(
+                    navController,
+                    backStackEntry.arguments?.getString("startDate")!!,
+                    backStackEntry.arguments?.getString("endDate")!!,
+                    backStackEntry.arguments?.getString("from"),
+                    backStackEntry.arguments?.getString("to")
+                )
+            }
+        }
 
-            )
+        composable("track?icao24={icao24}&time={time}") { backStackEntry ->
+            NetworkHandler(navController) {
+                TrackScreen(
+                    backStackEntry.arguments?.getString("icao24")!!,
+                    backStackEntry.arguments?.getString("time")!!.toLong()
+                )
+            }
         }
 
     }
 }
 
 @Composable
-fun NetworkHandler(navController: NavHostController, isNoConnectionScreen: Boolean = false, content: @Composable () -> Unit) {
+fun NetworkHandler(
+    navController: NavHostController,
+    isNoConnectionScreen: Boolean = false,
+    content: @Composable () -> Unit
+) {
     fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork
         val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
@@ -169,10 +187,9 @@ fun NetworkHandler(navController: NavHostController, isNoConnectionScreen: Boole
 
     if (isNetworkAvailable && isNoConnectionScreen) {
         navController.navigate("home")
-    } else if(isNetworkAvailable || isNoConnectionScreen) {
+    } else if (isNetworkAvailable || isNoConnectionScreen) {
         content()
-    }
-    else {
+    } else {
         Log.d("Errreur", "no connct")
     }
 }
