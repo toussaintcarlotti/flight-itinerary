@@ -144,12 +144,12 @@ fun FlightItineraryNavHost(
         composable("track?icao24={icao24}&time={time}") { backStackEntry ->
             NetworkHandler(navController) {
                 TrackScreen(
+                    navController,
                     backStackEntry.arguments?.getString("icao24")!!,
                     backStackEntry.arguments?.getString("time")!!.toLong()
                 )
             }
         }
-
     }
 }
 

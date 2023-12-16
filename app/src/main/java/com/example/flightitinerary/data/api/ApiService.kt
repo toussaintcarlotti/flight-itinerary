@@ -36,6 +36,13 @@ interface ApiService {
         @Path("end") end: Long
     ): ApiResponse<List<Flight>>
 
+    @GET("flights/aircraft/{aircraft}/{begin}/{end}")
+    suspend fun getFlightsByAircraft(
+        @Path("aircraft") aircraft: String,
+        @Path("begin") begin: String,
+        @Path("end") end: String
+    ): ApiResponse<List<Flight>>
+
     @GET("tracks/{icao24}/{time}")
     suspend fun getTrackByAircraft(
         @Path("icao24") icao24: String,

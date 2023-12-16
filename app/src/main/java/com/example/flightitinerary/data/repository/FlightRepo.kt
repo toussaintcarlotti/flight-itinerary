@@ -27,4 +27,8 @@ class FlightRepo {
     suspend fun getFlightsArrival(airport: String, begin: String, end: String): List<Flight> {
         return apiService.getFlightsArrival(airport, getTimestampFromStringDate(begin), getTimestampFromStringDate(end)).data
     }
+
+    suspend fun getFlightsByAircraft(aircraft: String, begin: String, end: String): List<Flight> {
+        return apiService.getFlightsByAircraft(aircraft, begin, end).data
+    }
 }
