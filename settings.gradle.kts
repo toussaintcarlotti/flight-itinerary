@@ -23,7 +23,7 @@ dependencyResolutionManagement {
             // Do not change the username below. It should always be "mapbox" (not your username).
             credentials.username = "mapbox"
             // Use the secret token stored in gradle.properties as the password
-            credentials.password = keyProps.getProperty("MAPBOX_DOWNLOADS_TOKEN")
+            credentials.password = "sk.eyJ1IjoidG91c3NhaW50Y2FybG90dGkiLCJhIjoiY2xxODJpeGY2MWFwcjJrcGF4OGg5NGtqbSJ9.MD7IwgU3Nbstlf-2UcB1YQ"
             authentication.create<BasicAuthentication>("basic")
         }
     }
