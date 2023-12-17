@@ -53,7 +53,7 @@ fun HomeScreen(navController: NavController) {
 
     val calendarState = rememberUseCaseState()
     val selectedDateRange = remember {
-        val value = Range(LocalDate.now().minusYears(1), LocalDate.now().plusYears(1))
+        val value = Range(LocalDate.now().minusMonths(6), LocalDate.now().plusMonths(6))
         mutableStateOf(value)
     }
 
@@ -78,7 +78,7 @@ fun HomeScreen(navController: NavController) {
                     label = "Ville de départ",
                     listItems = airports.map { it },
                     onSelectItem = {
-                        isButtonEnabled = true
+                        isButtonEnabled = arrivalAirport !== null || it !== null
                         departureAirport = it
                     },
                     saverState = Airport.saver()
@@ -89,7 +89,7 @@ fun HomeScreen(navController: NavController) {
                     label = "Ville d'arrivée",
                     listItems = airports.map { it },
                     onSelectItem = {
-                        isButtonEnabled = true
+                        isButtonEnabled = departureAirport !== null || it !== null
                         arrivalAirport = it
                     },
                     saverState = Airport.saver()

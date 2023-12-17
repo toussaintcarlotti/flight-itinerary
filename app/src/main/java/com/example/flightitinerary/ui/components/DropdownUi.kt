@@ -53,7 +53,7 @@ fun <T> DropdownUi(label: String, listItems: List<T>, onSelectItem: (T?) -> Unit
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text(text = "Aucune") },
+                text = { Text(text = "Toutes") },
                 onClick = {
                     selectedItem = null
                     expanded = false

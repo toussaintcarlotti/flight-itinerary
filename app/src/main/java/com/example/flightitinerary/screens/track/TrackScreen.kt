@@ -2,7 +2,6 @@ package com.example.flightitinerary.screens.track
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flightitinerary.ui.components.FlightCard
+import com.example.flightitinerary.ui.components.TrackDetails
 import com.example.flightitinerary.utils.Utils
 import com.example.flightitinerary.utils.Utils.Companion.getTimestampFromStringDate
 import com.mapbox.geojson.LineString
@@ -60,7 +60,7 @@ fun TrackScreen(
     val track by viewModel.track.collectAsState()
     val flights by viewModel.flights.collectAsState()
     val configuration = LocalConfiguration.current
-    val isTablet = 600.dp < configuration.screenWidthDp.dp
+    val isTablet = 900.dp < configuration.screenWidthDp.dp
     val fillMaxHeight = if (isTablet) 1f else 0.8f
     val fillMaxWidth = if (isTablet) 0.5f else 1f
 
@@ -149,18 +149,13 @@ fun TrackScreen(
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
                     ) {
-                        Column(
-                            Modifier
-                                .border(2.dp, Color.LightGray, RoundedCornerShape(10.dp))
-                                .padding(10.dp)
-                        ) {
-                            Text(text = "Vitesse: ?? km/h")
-                            Text(text = "Altitude: ?? m")
-                            Text(text = "Direction: ??°")
-                            Text(text = "Latitude: ??")
-                            Text(text = "Longitude: ??")
-                        }
-
+                        TrackDetails(
+                            speed = 0.0,
+                            altitude = 0.0,
+                            direction = 0.0,
+                            latitude = 0.0,
+                            longitude = 0.0
+                        )
 
                         Row(
                             modifier = Modifier
@@ -170,7 +165,7 @@ fun TrackScreen(
                         ) {
                             Text(
                                 text = "Vol des 3 derniers jours",
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         }
 
@@ -196,8 +191,15 @@ fun TrackScreen(
             }
 
             if (!isTablet) {
-                Button(onClick = {}) {
-                    Text(text = "Voir les détails")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(onClick = {
+                        navController.navigate("trackDetails?icao24=$icao24&time=$time")
+                    }) {
+                        Text(text = "Voir les détails")
+                    }
                 }
             }
         }

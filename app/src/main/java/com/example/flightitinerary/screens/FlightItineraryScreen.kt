@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.flightitinerary.R
 import com.example.flightitinerary.screens.flightslist.FlightsListScreen
 import com.example.flightitinerary.screens.home.HomeScreen
+import com.example.flightitinerary.screens.track.TrackDetailsScreen
 import com.example.flightitinerary.screens.track.TrackScreen
 import kotlinx.coroutines.delay
 
@@ -144,6 +145,16 @@ fun FlightItineraryNavHost(
         composable("track?icao24={icao24}&time={time}") { backStackEntry ->
             NetworkHandler(navController) {
                 TrackScreen(
+                    navController,
+                    backStackEntry.arguments?.getString("icao24")!!,
+                    backStackEntry.arguments?.getString("time")!!.toLong()
+                )
+            }
+        }
+
+        composable("trackDetails?icao24={icao24}&time={time}") { backStackEntry ->
+            NetworkHandler(navController) {
+                TrackDetailsScreen(
                     navController,
                     backStackEntry.arguments?.getString("icao24")!!,
                     backStackEntry.arguments?.getString("time")!!.toLong()

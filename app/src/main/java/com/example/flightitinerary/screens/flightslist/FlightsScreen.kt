@@ -52,12 +52,14 @@ fun FlightsListScreen(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         ) {
-            if (from !== null && to !== null) {
-                Text(text = "Vol de $from à $to")
-            } else if (from !== null) {
-                Text(text = "Vol partant de $from")
-            } else if (to !== null) {
-                Text(text = "Vol vers $to")
+            if (flights.isNotEmpty()) {
+                if (from !== null && to !== null) {
+                    Text(text = "Vol de ${flights.first().departureAirportCity ?: from} à ${flights.first().arrivalAirportCity ?:to}")
+                } else if (from !== null) {
+                    Text(text = "Vol partant de ${flights.first().departureAirportCity ?: from}")
+                } else if (to !== null) {
+                    Text(text = "Vol vers ${flights.first().arrivalAirportCity ?: to}")
+                }
             }
         }
 
